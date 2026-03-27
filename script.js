@@ -2,72 +2,85 @@ const fileInput = document.getElementById('fileInput');
 let chartInstance = null;
 
 fileInput.addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function() {
         try {
-            // Limpiamos el JSON por si el Arduino no cerró el corchete final "]"
-            let rawData = e.target.result.trim();
-            if (!rawData.endsWith(']')) rawData += '\n]';
-            
-            const data = JSON.parse(rawData);
-            actualizarUI(data);
-        } catch (error) {
-            console.error(error);
-            alert("Error: El archivo .JSN está corrupto o incompleto.");
+            const runnerData = JSON.parse(reader.result);
+            processAndDisplay(runnerData);
+        } catch(err) {
+            alert("Error: El formato del JSON no es válido.");
         }
     };
-    reader.readAsText(file);
+    reader.readAsText(e.target.files[0]);
 });
 
-function actualizarUI(data) {
-    const ultimo = data[data.length - 1];
+// Función para convertir segundos a formato MM:SS
+function secondsToMMSS(totalSeconds) {
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = Math.floor(totalSeconds % 60);
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
 
-    // Actualizar las tarjetas con los datos finales
-    document.getElementById('val-pasos').innerText = ultimo.step;
-    document.getElementById('val-dist').innerText = ultimo.dist.toFixed(2);
-    document.getElementById('val-media').innerText = ultimo.vel_m.toFixed(1);
-    document.getElementById('val-punta').innerText = ultimo.top.toFixed(1);
+// Función para calcular el Ritmo (min/km)
+function calculatePace(distanceMeters, timeSeconds) {
+    if (distanceMeters === 0) return "00:00";
+    const distanceKm = distanceMeters / 1000;
+    const minutes = timeSeconds / 60;
+    const paceDecimal = minutes / distanceKm; // minutos por kilometro
+    return secondsToMMSS(paceDecimal * 60);
+}
 
-    // Configurar la Gráfica
-    const ctx = document.getElementById('velocidadChart').getContext('2d');
+function processAndDisplay(data) {
+    const lastEntry = data[data.length - 1];
+
+    // 1. Actualizar Tarjetas
+    document.getElementById('val-dist').innerHTML = `${lastEntry.dist.toFixed(2)} <small>m</small>`;
+    document.getElementById('val-steps').innerText = lastEntry.step;
+    document.getElementById('val-top').innerHTML = `${lastEntry.top.toFixed(1)} <small>km/h</small>`;
+    document.getElementById('val-avg').innerHTML = `${lastEntry.vel_m.toFixed(1)} <small>km/h</small>`;
     
-    // Si ya existe una gráfica, la borramos para crear la nueva
+    // Tiempo y Ritmo
+    document.getElementById('val-time').innerText = secondsToMMSS(lastEntry.tm);
+    document.getElementById('val-pace').innerHTML = `${calculatePace(lastEntry.dist, lastEntry.tm)} <small>min/km</small>`;
+
+    // 2. Configurar Gráfica Velocidad vs Tiempo
+    const ctx = document.getElementById('performanceChart').getContext('2d');
+    
     if (chartInstance) chartInstance.destroy();
 
     chartInstance = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: data.map(d => "Paso " + d.step),
+            labels: data.map(d => secondsToMMSS(d.tm)), // Eje X: Tiempo formateado
             datasets: [{
-                label: 'Velocidad Instantánea (km/h)',
+                label: 'Velocidad Instantánea',
                 data: data.map(d => d.vel_i),
-                borderColor: '#3b82f6',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderColor: '#00ffa3',
+                backgroundColor: 'rgba(0, 255, 163, 0.1)',
                 borderWidth: 3,
                 fill: true,
-                tension: 0.4, // Curva suave como en la captura
+                tension: 0.3,
                 pointRadius: 2
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
-            },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: '#334155' },
+                x: {
+                    title: { display: true, text: 'Tiempo de Carrera (MM:SS)', color: '#94a3b8' },
+                    grid: { display: false },
                     ticks: { color: '#94a3b8' }
                 },
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#94a3b8', maxRotation: 45, minRotation: 45 }
+                y: {
+                    title: { display: true, text: 'Velocidad (km/h)', color: '#94a3b8' },
+                    grid: { color: '#334155' },
+                    ticks: { color: '#94a3b8' },
+                    beginAtZero: true
                 }
+            },
+            plugins: {
+                legend: { display: false }
             }
         }
     });
