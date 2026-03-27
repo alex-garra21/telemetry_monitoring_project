@@ -1,0 +1,21 @@
+[
+    {"step": 1, "dist": 0.75, "vel_i": 0.00, "vel_m": 0.00, "top": 0.00},
+    {"step": 2, "dist": 1.50, "vel_i": 0.49, "vel_m": 0.98, "top": 0.49},
+    {"step": 3, "dist": 2.25, "vel_i": 4.79, "vel_m": 1.33, "top": 4.79},
+    {"step": 4, "dist": 3.00, "vel_i": 0.17, "vel_m": 0.48, "top": 4.79},
+    {"step": 5, "dist": 3.75, "vel_i": 3.01, "vel_m": 0.58, "top": 4.79},
+    {"step": 6, "dist": 4.50, "vel_i": 3.12, "vel_m": 0.67, "top": 4.79},
+    {"step": 7, "dist": 5.25, "vel_i": 5.11, "vel_m": 0.77, "top": 5.11},
+    {"step": 8, "dist": 6.00, "vel_i": 7.85, "vel_m": 0.87, "top": 7.85},
+    {"step": 9, "dist": 6.75, "vel_i": 5.38, "vel_m": 0.96, "top": 7.85},
+    {"step": 10, "dist": 7.50, "vel_i": 7.87, "vel_m": 1.05, "top": 7.87},
+    {"step": 11, "dist": 8.25, "vel_i": 5.86, "vel_m": 1.13, "top": 7.87},
+    {"step": 12, "dist": 9.00, "vel_i": 8.91, "vel_m": 1.22, "top": 8.91},
+    {"step": 13, "dist": 9.75, "vel_i": 5.57, "vel_m": 1.30, "top": 8.91},
+    {"step": 14, "dist": 10.50, "vel_i": 5.91, "vel_m": 1.38, "top": 8.91},
+    {"step": 15, "dist": 11.25, "vel_i": 3.17, "vel_m": 1.43, "top": 8.91},
+    {"step": 16, "dist": 12.00, "vel_i": 8.97, "vel_m": 1.51, "top": 8.97},
+    {"step": 17, "dist": 12.75, "vel_i": 8.97, "vel_m": 1.59, "top": 8.97},
+    {"step": 18, "dist": 13.50, "vel_i": 8.97, "vel_m": 1.66, "top": 8.97},
+    {"step": 19, "dist": 14.25, "vel_i": 3.11, "vel_m": 1.70, "top": 8.97}
+  ]

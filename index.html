@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RunnerDash - Análisis de Carrera</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <div class="logo-area">
+                <h1>RUNNER<span>DASHBOARD</span></h1>
+                <p>Análisis de Carreras</p>
+                <p>Septimo Ciclo UMG - Proyecto Arquitectura de Computadores - Coban, A.V. - 2026</p>
+            </div>
+            <div class="upload-area">
+                <label for="fileInput" class="custom-file-upload">
+                    Cargar archivo
+                </label>
+                <input type="file" id="fileInput" accept=".jsn,.json">
+            </div>
+        </header>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <h3>PASOS TOTALES</h3>
+                <p id="val-pasos">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>DISTANCIA</h3>
+                <p id="val-dist">0.00 <small>m</small></p>
+            </div>
+            <div class="stat-card">
+                <h3>VEL. MEDIA</h3>
+                <p id="val-media">0.0 <small>km/h</small></p>
+            </div>
+            <div class="stat-card highlight">
+                <h3>VEL. PUNTA</h3>
+                <p id="val-punta">0.0 <small>km/h</small></p>
+            </div>
+        </section>
+
+        <section class="chart-container">
+            <canvas id="velocidadChart"></canvas>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
