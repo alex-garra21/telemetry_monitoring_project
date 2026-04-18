@@ -57,30 +57,50 @@ function processAndDisplay(data) {
                 data: data.map(d => d.vel_i),
                 borderColor: '#00ffa3',
                 backgroundColor: 'rgba(0, 255, 163, 0.1)',
-                borderWidth: 3,
+                borderWidth: 1.5,      // 1. Línea más delgada
                 fill: true,
-                tension: 0.3,
-                pointRadius: 2
+                tension: 0.4,          // 2. Curva más suave
+                pointRadius: 0,        // 3. Ocultar los puntos estáticos
+                pointHoverRadius: 5,   // 4. Mostrar el punto solo al pasar el mouse
+                pointBackgroundColor: '#ffffff', // Color del punto al pasar el mouse
+                pointBorderColor: '#00ffa3',
+                pointBorderWidth: 2
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            interaction: {
+                mode: 'index', // Mejora la interacción con el mouse
+                intersect: false,
+            },
             scales: {
                 x: {
                     title: { display: true, text: 'Tiempo de Carrera (MM:SS)', color: '#94a3b8' },
                     grid: { display: false },
-                    ticks: { color: '#94a3b8' }
+                    ticks: { 
+                        color: '#94a3b8',
+                        maxTicksLimit: 10, // 5. Evita que el eje X se llene de texto
+                        maxRotation: 0     // Mantiene los textos en horizontal
+                    }
                 },
                 y: {
                     title: { display: true, text: 'Velocidad (km/h)', color: '#94a3b8' },
-                    grid: { color: '#334155' },
+                    grid: { color: '#1e293b' }, // Un gris más oscuro para el fondo
                     ticks: { color: '#94a3b8' },
                     beginAtZero: true
                 }
             },
             plugins: {
-                legend: { display: false }
+                legend: { display: false },
+                tooltip: { // Mejora visual del cuadro de información al pasar el mouse
+                    backgroundColor: 'rgba(10, 17, 40, 0.9)',
+                    titleColor: '#94a3b8',
+                    bodyColor: '#ffffff',
+                    borderColor: '#1e293b',
+                    borderWidth: 1,
+                    displayColors: false
+                }
             }
         }
     });
