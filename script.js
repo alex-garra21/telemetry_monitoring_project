@@ -5,10 +5,25 @@ fileInput.addEventListener('change', function(e) {
     const reader = new FileReader();
     reader.onload = function() {
         try {
-            const runnerData = JSON.parse(reader.result);
+            // 1. Leemos el JSON puramente numérico (ej. [ [1, 4.63...], [2, 5.77...] ])
+            const rawData = JSON.parse(reader.result);
+            
+            // 2. Mapeamos (traducimos) las posiciones del arreglo a los nombres de tu Dashboard
+            const runnerData = rawData.map(d => ({
+                step: d[0],
+                tm: d[1],
+                dist: d[2],
+                vel_i: d[3],
+                vel_m: d[4],
+                top: d[5]
+            }));
+
+            // 3. Enviamos los datos procesados a tu función
             processAndDisplay(runnerData);
+            
         } catch(err) {
             alert("Error: El formato del JSON no es válido.");
+            console.error(err);
         }
     };
     reader.readAsText(e.target.files[0]);
