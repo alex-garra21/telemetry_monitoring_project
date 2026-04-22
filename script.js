@@ -5,10 +5,10 @@ fileInput.addEventListener('change', function(e) {
     const reader = new FileReader();
     reader.onload = function() {
         try {
-            // 1. Leemos el JSON puramente numérico (ej. [ [1, 4.63...], [2, 5.77...] ])
+            // 1. Leemos el JSON puramente numérico
             const rawData = JSON.parse(reader.result);
             
-            // 2. Mapeamos (traducimos) las posiciones del arreglo a los nombres de tu Dashboard
+            // 2. Mapeamos las posiciones del arreglo a los nombres del Dashboard
             const runnerData = rawData.map(d => ({
                 step: d[0],
                 tm: d[1],
@@ -18,7 +18,7 @@ fileInput.addEventListener('change', function(e) {
                 top: d[5]
             }));
 
-            // 3. Enviamos los datos procesados a tu función
+            // 3. Enviamos los datos procesados
             processAndDisplay(runnerData);
             
         } catch(err) {
@@ -46,10 +46,21 @@ function calculatePace(distanceMeters, timeSeconds) {
 }
 
 function processAndDisplay(data) {
+    // Obtenemos el último registro para los totales
     const lastEntry = data[data.length - 1];
 
-    // 1. Actualizar Tarjetas
-    document.getElementById('val-dist').innerHTML = `${lastEntry.dist.toFixed(2)} <small>m</small>`;
+    // --- 1. LÓGICA DE DISTANCIA (M vs KM) ---
+    // Primero calculamos qué vamos a mostrar
+    let distanciaHTML = "";
+    if (lastEntry.dist >= 1000) {
+        let distanciaKm = lastEntry.dist / 1000;
+        distanciaHTML = `${distanciaKm.toFixed(2)} <small>km</small>`;
+    } else {
+        distanciaHTML = `${lastEntry.dist.toFixed(2)} <small>m</small>`;
+    }
+
+    // --- 2. ACTUALIZAR TARJETAS EN EL DOM ---
+    document.getElementById('val-dist').innerHTML = distanciaHTML;
     document.getElementById('val-steps').innerText = lastEntry.step;
     document.getElementById('val-top').innerHTML = `${lastEntry.top.toFixed(1)} <small>km/h</small>`;
     document.getElementById('val-avg').innerHTML = `${lastEntry.vel_m.toFixed(1)} <small>km/h</small>`;
@@ -58,26 +69,27 @@ function processAndDisplay(data) {
     document.getElementById('val-time').innerText = secondsToMMSS(lastEntry.tm);
     document.getElementById('val-pace').innerHTML = `${calculatePace(lastEntry.dist, lastEntry.tm)} <small>min/km</small>`;
 
-    // 2. Configurar Gráfica Velocidad vs Tiempo
+    // --- 3. CONFIGURAR GRÁFICA ---
     const ctx = document.getElementById('performanceChart').getContext('2d');
     
+    // Destruir la instancia anterior si existe para que no se superpongan
     if (chartInstance) chartInstance.destroy();
 
     chartInstance = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: data.map(d => secondsToMMSS(d.tm)), // Eje X: Tiempo formateado
+            labels: data.map(d => secondsToMMSS(d.tm)), 
             datasets: [{
                 label: 'Velocidad Instantánea',
                 data: data.map(d => d.vel_i),
                 borderColor: '#00ffa3',
                 backgroundColor: 'rgba(0, 255, 163, 0.1)',
-                borderWidth: 1.5,      // 1. Línea más delgada
+                borderWidth: 1.5,      
                 fill: true,
-                tension: 0.4,          // 2. Curva más suave
-                pointRadius: 0,        // 3. Ocultar los puntos estáticos
-                pointHoverRadius: 5,   // 4. Mostrar el punto solo al pasar el mouse
-                pointBackgroundColor: '#ffffff', // Color del punto al pasar el mouse
+                tension: 0.4,          
+                pointRadius: 0,        
+                pointHoverRadius: 5,   
+                pointBackgroundColor: '#ffffff', 
                 pointBorderColor: '#00ffa3',
                 pointBorderWidth: 2
             }]
@@ -86,7 +98,7 @@ function processAndDisplay(data) {
             responsive: true,
             maintainAspectRatio: false,
             interaction: {
-                mode: 'index', // Mejora la interacción con el mouse
+                mode: 'index', 
                 intersect: false,
             },
             scales: {
@@ -95,20 +107,20 @@ function processAndDisplay(data) {
                     grid: { display: false },
                     ticks: { 
                         color: '#94a3b8',
-                        maxTicksLimit: 10, // 5. Evita que el eje X se llene de texto
-                        maxRotation: 0     // Mantiene los textos en horizontal
+                        maxTicksLimit: 10, 
+                        maxRotation: 0     
                     }
                 },
                 y: {
                     title: { display: true, text: 'Velocidad (km/h)', color: '#94a3b8' },
-                    grid: { color: '#1e293b' }, // Un gris más oscuro para el fondo
+                    grid: { color: '#1e293b' }, 
                     ticks: { color: '#94a3b8' },
                     beginAtZero: true
                 }
             },
             plugins: {
                 legend: { display: false },
-                tooltip: { // Mejora visual del cuadro de información al pasar el mouse
+                tooltip: { 
                     backgroundColor: 'rgba(10, 17, 40, 0.9)',
                     titleColor: '#94a3b8',
                     bodyColor: '#ffffff',
